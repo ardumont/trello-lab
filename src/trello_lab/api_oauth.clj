@@ -79,8 +79,14 @@
   []
   (api-query :get "/members/me/boards"))
 
+(defn get-board
+  "Retrieve the boards of the current user."
+  [id]
+  (api-query :get (str "/boards/" id)))
+
 (comment
   (->> (get-boards)
        :body
        (map #(select-keys % #{:name :url :id})))
-)
+
+  (get-board "some-board-id"))
