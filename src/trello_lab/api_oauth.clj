@@ -1,7 +1,8 @@
 (ns scratch.trello.api-oauth
   (:require [clj-http.client :as c]
             [clojure.string  :as s]
-            [oauth.client    :as oauth]))
+            [oauth.client    :as oauth]
+            [clojure.pprint  :as pprint]))
 
 ;; your credentials in the ~/.trello/config.clj file
 ;; (def trello-credentials {:consumer-key "consumer-key"
@@ -49,27 +50,37 @@
 ;; credentials are returned as a map of all OAuth parameters that must be
 ;; included with the request as either query parameters or in an
 ;; Authorization HTTP header.
-(def credentials (oauth/credentials consumer
-                                    (:oauth_token access-token-response)
-                                    (:oauth_token_secret access-token-response)
-                                    :GET
-                                    "https://api.trello.com/1/members/me/boards"))
-
-(def URL "The needed prefix url for trello" "https://api.trello.com/1")
 
 (defn compute-url "Compute url with authentication needed." [url path] (format "%s%s" url path))
 
+(defn credentials
+  [method url]
+  (oauth/credentials consumer
+                     (:oauth_token access-token-response)
+                     (:oauth_token_secret access-token-response)
+                     method
+                     (compute-url URL url)))
+
 (defn api-query
   ([method path & [req]]
-     (->> {:method     method
-           :url        (compute-url URL path)
-           :accept     :json
-           :as         :json}
-          (merge req)
-          c/request)))
+     (let [creds (credentials method path)]
+       (->> {:method       method
+             :url          (compute-url URL path)
+             :accept       :json
+             :as           :json
+             :query-params creds}
+            (merge req)
+            c/request))))
+
+;; api part
+
+(defn get-boards
+  "Retrieve the boards of the current user."
+  []
+  (api-query :get "/members/me/boards"))
 
 (comment
-  (->> (api-query :get "/members/me/boards" {:query-params credentials})
+  (->> (get-boards)
        :body
-       (map #(select-keys % #{:name :url :id}))
-       clojure.pprint/pprint))
+       (map #(select-keys % #{:name :url :id})))
+)
