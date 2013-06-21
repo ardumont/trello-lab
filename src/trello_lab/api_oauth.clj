@@ -135,3 +135,8 @@
           :idOrganization nil
           :url "https://trello.com/board/web2print/some-board-id"
           :id "some-board-id"}})
+
+(defn get-cards
+  "cards of a board"
+  [board-id]
+  (api-query :get (str "/boards/" board-id "/cards")))
