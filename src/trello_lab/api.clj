@@ -3,9 +3,10 @@
             [clojure.string    :as s]))
 
 ;; your credentials in the ~/.trello/config.clj file
-;; (def trello-credentials {:developer-api-key "developer-api-key"
-;;                          :secret-oauth-key  "secret-oauth-key"})
+;; (def trello-credentials {:consumer-key "consumer-key"
+;;                          :consumer-secret-key  "consumer-secret-key"})
 
+;; load consumer-key and consumer-secret
 (load-file (str (System/getProperty "user.home") "/.trello/config.clj"))
 
 (defn url
@@ -19,7 +20,7 @@
      (format "%s%s?key=%s"
              url
              path
-             (:developer-api-key trello-credentials)))
+             (:consumer-key trello-credentials)))
   ([url path secret-token]
      (format "%s&token=%s"
              (compute-url url path)
@@ -52,7 +53,7 @@
 (defn get-token-from-url
   "Generates the trello url to retrieve a token."
   []
-  (format "https://trello.com/1/connect?key=%s&expiration=1day&response_type=token&scope=read,write" (:developer-api-key trello-credentials)))
+  (format "https://trello.com/1/connect?key=%s&expiration=1day&response_type=token&scope=read,write" (:consumer-key trello-credentials)))
 
 (comment ;; for private data, we need to ask for a token
 
