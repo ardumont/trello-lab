@@ -69,11 +69,7 @@
           c/request)))
 
 (comment
-  (api-query :get "/members/me/boards"
-             {:query-params credentials})
-
-  (->> (api-query :get "/members/me/boards"
-                  {:query-params credentials})
+  (->> (api-query :get "/members/me/boards" {:query-params credentials})
        :body
-       (map :name)
+       (map #(select-keys % #{:name :url :id}))
        clojure.pprint/pprint))
