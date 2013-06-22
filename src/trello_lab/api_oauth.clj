@@ -140,3 +140,8 @@
   "cards of a board"
   [board-id]
   (api-query :get (str "/boards/" board-id "/cards")))
+
+(defn get-card
+  "Detail of a card with id card-id."
+  [card-id]
+  (api-query :get (str "/cards/" card-id)))
