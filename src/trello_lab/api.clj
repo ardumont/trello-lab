@@ -6,7 +6,7 @@
 ;; (def trello-credentials {:consumer-key "consumer-key"
 ;;                          :consumer-secret-key  "consumer-secret-key"})
 
-;; load consumer-key and consumer-secret
+;; load consumer-key and consumer-secret and secret-token that does give access to everything forever (boum)
 (load-file (str (System/getProperty "user.home") "/.trello/config.clj"))
 
 (defn url
