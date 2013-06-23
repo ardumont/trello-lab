@@ -1,4 +1,4 @@
-(ns trello.query
+(ns trello-lab.query
   "Query the trello api (the basic authentication scheme is implemented here)"
   (:require [clj-http.client   :as c]
             [clojure.string    :as s]))
