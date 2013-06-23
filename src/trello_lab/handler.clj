@@ -17,6 +17,12 @@
        (response/body-response "trello-lab - REST API to deal with the board updates of your trello - This is to be used with emacs's org-trello mode."))
 
   ;; main routes
+  (GET "/boards/" []
+       (->> (trello/get-boards)
+            :body
+            json/write-str
+            response/get-json-response))
+
   (GET "/boards/:nature" [nature]
        (->> (trello/get-boards)
             :body
