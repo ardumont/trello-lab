@@ -1,4 +1,5 @@
-(ns scratch.trello.api-oauth
+(ns trello.api-oauth
+  "Connection to trello through oauth"
   (:require [clj-http.client :as c]
             [clojure.string  :as s]
             [oauth.client    :as oauth]
@@ -51,6 +52,8 @@
 ;; included with the request as either query parameters or in an
 ;; Authorization HTTP header.
 
+(def URL "https://api.trello.com/1")
+
 (defn compute-url "Compute url with authentication needed." [url path] (format "%s%s" url path))
 
 (defn credentials
@@ -84,12 +87,13 @@
        :body
        (map #(select-keys % #{:name :url :id})))
 
-  '({:id "some-id0"
-     :url "https://trello.com/board/some-name0/some-id0"
-     :name "some-name0-with-spaces"}
-    {:id "some-id1"
-     :url "https://trello.com/board/some-name1/some-id1"
-     :name "some-name1-with-spaces"}))
+  ;; '({:id "some-id0"
+  ;;    :url "https://trello.com/board/some-name0/some-id0"
+  ;;    :name "some-name0-with-spaces"}
+  ;;   {:id "some-id1"
+  ;;    :url "https://trello.com/board/some-name1/some-id1"
+  ;;    :name "some-name1-with-spaces"})
+  )
 
 (defn get-board
   "Retrieve the boards of the current user."
@@ -99,42 +103,43 @@
 (comment
   (get-board "some-board-id")
 
-  {:trace-redirects ["https://api.trello.com/1/boards/some-board-id"]
-   :request-time 995
-   :status 200
-   :headers {"x-server-time" "1371833899621"
-             "access-control-allow-origin" "*"
-             "content-type" "application/json"
-             "date" "Fri 21 Jun 2013 16:58:19 GMT"
-             "cache-control" "max-age=0 must-revalidate no-cache no-store"
-             "expires" "Thu 01 Jan 1970 00:00:00"
-             "access-control-allow-methods" "GET PUT POST DELETE"
-             "x-powered-by" "Express"
-             "content-length" "484"
-             "connection" "close"}
-   :body {:desc ""
-          :name "some-name"
-          :labelNames {:yellow ""
-                       :red "administration"
-                       :purple ""
-                       :orange ""
-                       :green ""
-                       :blue ""}
-          :prefs {:selfJoin false
-                  :invitations "members"
-                  :canInvite true
-                  :canBeOrg true
-                  :canBePrivate true
-                  :cardCovers true
-                  :comments "members"
-                  :permissionLevel "private"
-                  :canBePublic true
-                  :voting "members"}
-          :pinned true
-          :closed true
-          :idOrganization nil
-          :url "https://trello.com/board/web2print/some-board-id"
-          :id "some-board-id"}})
+  ;; {:trace-redirects ["https://api.trello.com/1/boards/some-board-id"]
+  ;;  :request-time 995
+  ;;  :status 200
+  ;;  :headers {"x-server-time" "1371833899621"
+  ;;            "access-control-allow-origin" "*"
+  ;;            "content-type" "application/json"
+  ;;            "date" "Fri 21 Jun 2013 16:58:19 GMT"
+  ;;            "cache-control" "max-age=0 must-revalidate no-cache no-store"
+  ;;            "expires" "Thu 01 Jan 1970 00:00:00"
+  ;;            "access-control-allow-methods" "GET PUT POST DELETE"
+  ;;            "x-powered-by" "Express"
+  ;;            "content-length" "484"
+  ;;            "connection" "close"}
+  ;;  :body {:desc ""
+  ;;         :name "some-name"
+  ;;         :labelNames {:yellow ""
+  ;;                      :red "administration"
+  ;;                      :purple ""
+  ;;                      :orange ""
+  ;;                      :green ""
+  ;;                      :blue ""}
+  ;;         :prefs {:selfJoin false
+  ;;                 :invitations "members"
+  ;;                 :canInvite true
+  ;;                 :canBeOrg true
+  ;;                 :canBePrivate true
+  ;;                 :cardCovers true
+  ;;                 :comments "members"
+  ;;                 :permissionLevel "private"
+  ;;                 :canBePublic true
+  ;;                 :voting "members"}
+  ;;         :pinned true
+  ;;         :closed true
+  ;;         :idOrganization nil
+  ;;         :url "https://trello.com/board/web2print/some-board-id"
+  ;;         :id "some-board-id"}}
+  )
 
 (defn get-cards
   "cards of a board"
