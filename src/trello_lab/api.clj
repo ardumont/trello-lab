@@ -67,4 +67,4 @@
   (api-query :get "/members/me/boards" secret-token)
 
   ;; list the cards of the board 50bcfd2f033110476000e768
-  (api-query :get "/board/50bcfd2f033110476000e768/lists" secret-token))
+  (api-query :get "/board/50bcfd2f033110476000e768/lists" org-trello-token-forever))
