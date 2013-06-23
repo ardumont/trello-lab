@@ -1,4 +1,4 @@
-(ns scratch.trello.api
+(ns trello.api
   (:require [clj-http.client   :as c]
             [clojure.string    :as s]))
 
