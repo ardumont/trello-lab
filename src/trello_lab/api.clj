@@ -49,7 +49,6 @@
   (api-query :get "/boards/4d5ea62fd76aa1136000000c")
   (api-query :get "/organizations/fogcreek"))
 
-
 (defn get-token-from-url
   "Generates the trello url to retrieve a token."
   []
