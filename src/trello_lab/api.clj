@@ -67,3 +67,23 @@
 
   ;; list the cards of the board 50bcfd2f033110476000e768
   (api-query :get "/board/50bcfd2f033110476000e768/lists" org-trello-token-forever))
+
+(defn get-boards
+  "Retrieve the boards of the current user."
+  []
+  (api-query :get "/members/me/boards"))
+
+(defn get-board
+  "Retrieve the boards of the current user."
+  [id]
+  (api-query :get (str "/boards/" id)))
+
+(defn get-cards
+  "cards of a board"
+  [board-id]
+  (api-query :get (str "/boards/" board-id "/cards")))
+
+(defn get-card
+  "Detail of a card with id card-id."
+  [card-id]
+  (api-query :get (str "/cards/" card-id)))
