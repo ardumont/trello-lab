@@ -5,6 +5,7 @@
              [core       :as comp]
              [handler    :as handler]
              [route      :as route]]
+            [trello.api-oauth  :as trello]
             [trello-lab.http
              [response   :as response]
              [middleware :as middleware]]))
@@ -16,7 +17,8 @@
 
   ;; main routes
   (GET "/boards" []
-       )
+       (trello/get-boards))
+
   ;; create card in the board
   ;; create checklist in the card
   ;; add tasks to the checklist
