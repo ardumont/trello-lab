@@ -23,6 +23,14 @@
   [card-id]
   (query/api :get (str "/cards/" card-id)))
 
+(defn lists
+  "Display the lists of the board"
+  [board-id]
+  (query/api :get (str "/boards/" board-id "/lists")))
+
+(comment
+  (lists "50bcfd2f033110476000e768"))
+
 (defn add-list
   [list-data]
   (query/post "/lists/" list-data))
