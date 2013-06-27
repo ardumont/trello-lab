@@ -1,0 +1,26 @@
+#+title: Basic manipulation of trello board
+#+author: Antoine R. Dumont
+
+* DONE Authentication
+CLOSED: [2013-06-28 ven. 01:19]
+** DONE basic
+CLOSED: [2013-06-28 ven. 01:19]
+** DONE oauth
+CLOSED: [2013-06-28 ven. 01:19]
+* IN-PROGRESS Manipulation [62%]
+** DONE list lists
+CLOSED: [2013-06-28 ven. 01:20]
+** DONE add list
+CLOSED: [2013-06-28 ven. 01:20]
+** DONE list cards from a list
+CLOSED: [2013-06-28 ven. 01:20]
+** DONE add card to a list
+CLOSED: [2013-06-28 ven. 01:51]
+** DONE move card to another list
+CLOSED: [2013-06-28 ven. 01:51]
+** TODO Adding checklist
+** TODO Adding task to checklist
+** TODO check/uncheck tasks
+
+* TODO Workflow
+Describe use case.
