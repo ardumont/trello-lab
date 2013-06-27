@@ -47,8 +47,9 @@
   [card-data]
   (query/post "/cards/" card-data))
 
-(add-card {:name "test"
-           :idList "51ccc748f7f9987320000cca"})
+(comment
+  (add-card {:name "test"
+             :idList "51ccc748f7f9987320000cca"}))
 
 (defn list-cards
   [list-id]
@@ -56,3 +57,12 @@
 
 (comment
   (list-cards "51ccc748f7f9987320000cca"))
+
+(defn move-card
+  [{:keys [id] :as card-data}]
+  (query/put (str "/cards/" id) card-data))
+
+(comment
+  (add-card {:id "51ccca27a1b988f11300033c"
+             :name "renamingtestinplace"
+             :idList "50bcfd2f033110476000e769"}))

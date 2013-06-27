@@ -48,9 +48,21 @@
                :content-type :json})))
 
 (comment
-  (post "/cards/" {:name "test"
-                   :desc "desc"
+  (post "/cards/" {:name "anothertest"
+                   :desc "some other desc"
                    :idList "51ccc748f7f9987320000cca"}))
+(defn put
+  "PUT"
+  [path body]
+  (-> path
+      compute-url-final
+      (c/put {:form-params body
+              :content-type :json})))
+
+(comment
+  (put (str "/cards/51ccca27a1b988f11300033c") {:desc "trying-out-the-movement"
+                                                :name "renamingtestinplace"
+                                                :idList "50bcfd2f033110476000e769"}))
 
 (comment ;; reading public data without tokens
   (api :get "/members/ardumont")
