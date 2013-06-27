@@ -32,9 +32,12 @@
   (lists "50bcfd2f033110476000e768"))
 
 (defn add-list
-  [list-data]
+  "Add a list - the name and the board id are mandatory (so i say!)."
+  [{:keys [name idBoard] :as list-data}]
+  {:pre [(and name idBoard)]}
   (query/post "/lists/" list-data))
 
 (comment
   (add-list {:name "review"
-             :idBoard "50bcfd2f033110476000e768"}))
+             :idBoard "50bcfd2f033110476000e768"})
+  (add-list {:name "review"}))
