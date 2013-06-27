@@ -14,7 +14,9 @@
 (defroutes app-routes
   ;; dummy route to explain what this api is
   (GET "/" []
-       (response/body-response "trello-lab - REST API to deal with the board updates of your trello - This is to be used with emacs's org-trello mode."))
+       (-> {:description "trello-lab - REST API to deal with the board updates of your trello - This is to be used with emacs's org-trello mode."}
+            json/write-str
+            response/get-json-response))
 
   ;; main routes
   (GET "/boards/" []
