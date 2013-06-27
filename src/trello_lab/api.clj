@@ -49,3 +49,10 @@
 
 (add-card {:name "test"
            :idList "51ccc748f7f9987320000cca"})
+
+(defn list-cards
+  [list-id]
+  (query/api :get (str "/lists/" list-id "/cards/")))
+
+(comment
+  (list-cards "51ccc748f7f9987320000cca"))
