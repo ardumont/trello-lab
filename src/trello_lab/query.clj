@@ -40,16 +40,17 @@
        c/request))
 
 (defn post
-  "Post"
+  "POST"
   [path body]
   (-> path
       compute-url-final
       (c/post {:form-params body
                :content-type :json})))
 
-(c/post (compute-url-final "/cards/") {:name "test"
-                                       :desc "desc"
-                                       :idBoard "50bcfd2f033110476000e768"})
+(comment
+  (post "/cards/" {:name "test"
+                   :desc "desc"
+                   :idList "51ccc748f7f9987320000cca"}))
 
 (comment ;; reading public data without tokens
   (api :get "/members/ardumont")

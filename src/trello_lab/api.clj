@@ -41,3 +41,11 @@
   (add-list {:name "review"
              :idBoard "50bcfd2f033110476000e768"})
   (add-list {:name "review"}))
+
+(defn add-card
+  "Add a card to a board"
+  [card-data]
+  (query/post "/cards/" card-data))
+
+(add-card {:name "test"
+           :idList "51ccc748f7f9987320000cca"})
