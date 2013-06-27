@@ -5,24 +5,21 @@
 
 ;; your credentials in the ~/.trello/config.clj file
 ;; (def trello-credentials {:consumer-key "consumer-key"
-;;                          :consumer-secret-key  "consumer-secret-key"})
+;;                          :consumer-secret-key  "consumer-secret-key"
+;;                          ;; https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=e9a870215aa36c90957d67345fe1388c
+;;                          :access-token "access-token"})
 
-;; load consumer-key and consumer-secret and secret-token that does give access to everything forever (boum)
+;; load consumer-key, consumer-secret-key and access-token that does give access to everything forever (boum)
 (load-file (str (System/getProperty "user.home") "/.trello/config.clj"))
 
 (def URL "The needed prefix url for trello" "https://api.trello.com/1")
 
 (defn- compute-url
   "Compute url with authentication needed."
-  ([url path]
-     (format "%s%s?key=%s"
-             url
-             path
-             (:consumer-key trello-credentials)))
-  ([url path secret-token]
-     (format "%s&token=%s"
-             (compute-url url path)
-             secret-token)))
+  ([url path consumer-key]
+     (format "%s%s?key=%s" url path consumer-key))
+  ([url path consumer-key secret-token]
+     (format "%s&token=%s" (compute-url url path consumer-key) secret-token)))
 
 (comment
   (compute-url URL "/members/ardumont")
@@ -31,11 +28,11 @@
 (defn api
   "Query trello using the secret-token provided or use the one loaded from ~/.trello/config.clj"
   ([method path]
-     (api method path org-trello-token-forever))
-  ([method path secret-token]
+     (api method path (:consumer-key trello-credentials) (:access-token trello-credentials)))
+  ([method path consumer-key secret-token]
      (c/request
       {:method     method
-       :url        (compute-url URL path secret-token)
+       :url        (compute-url URL path consumer-key secret-token)
        :accept     :json
        :as         :json})))
 
