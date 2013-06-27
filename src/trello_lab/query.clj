@@ -25,16 +25,31 @@
   (compute-url URL "/members/ardumont")
   (compute-url URL "/members/ardumont" "some-secret-token"))
 
+(defn- compute-url-final
+  [path]
+  (compute-url URL path (:consumer-key trello-credentials) (:access-token trello-credentials)))
+
 (defn api
   "Query trello using the secret-token provided or use the one loaded from ~/.trello/config.clj"
-  ([method path]
-     (api method path (:consumer-key trello-credentials) (:access-token trello-credentials)))
-  ([method path consumer-key secret-token]
-     (c/request
-      {:method     method
-       :url        (compute-url URL path consumer-key secret-token)
-       :accept     :json
-       :as         :json})))
+  [method path & [req]]
+  (->> {:method     method
+        :url        (compute-url-final path)
+        :accept     :json
+        :as         :json}
+       (merge req)
+       c/request))
+
+(defn post
+  "Post"
+  [path body]
+  (-> path
+      compute-url-final
+      (c/post {:form-params body
+               :content-type :json})))
+
+(c/post (compute-url-final "/cards/") {:name "test"
+                                       :desc "desc"
+                                       :idBoard "50bcfd2f033110476000e768"})
 
 (comment ;; reading public data without tokens
   (api :get "/members/ardumont")
