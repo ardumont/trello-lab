@@ -58,6 +58,18 @@
 (comment
   (list-cards "51ccc748f7f9987320000cca"))
 
+(defn nth-card-id
+  "Retrieve the nth card from the list-id"
+  [list-id n]
+  (-> list-id
+      list-cards
+      :body
+      (get n)
+      :id))
+
+(comment
+  (nth-card-id "51ccc748f7f9987320000cca" 0))
+
 (defn move-card
   [{:keys [id] :as card-data}]
   (query/put (str "/cards/" id) card-data))
