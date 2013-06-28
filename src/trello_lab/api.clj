@@ -107,7 +107,9 @@
   "Add tasks (items) to a checklist with id 'id'"
   [{:keys [checklist-id name] :as items-data}]
   {:pre [(and checklist-id name)]}
-  (query/post (str "/checklists/" checklist-id "/checkItems") {:name name}))
+  (-> (str "/checklists/" checklist-id "/checkItems")
+      (query/post {:name name})
+      :body))
 
 (comment
   (add-tasks {:checklist-id "51cd3e1b12eb9c4d0300195f"
