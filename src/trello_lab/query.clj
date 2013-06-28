@@ -37,7 +37,8 @@
         :accept     :json
         :as         :json}
        (merge req)
-       c/request))
+       c/request
+       :body))
 
 (defn- execute-post-or-put
   [fn-post-or-put path body]
@@ -46,7 +47,8 @@
       (fn-post-or-put {:form-params  body
                        :content-type :json
                        :accept       :json
-                       :as           :json})))
+                       :as           :json})
+      :body))
 
 (defn post "POST" [path body] (execute-post-or-put c/post path body))
 

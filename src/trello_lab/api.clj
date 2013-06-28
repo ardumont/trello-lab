@@ -13,6 +13,10 @@
   [id]
   (query/api :get (str "/boards/" id)))
 
+(comment
+  (def boards (get-boards))
+  (def board1 (get-board "50bcfd2f033110476000e768")))
+
 (defn get-cards
   "cards of a board"
   [board-id]
@@ -28,8 +32,10 @@
   [board-id]
   (query/api :get (str "/boards/" board-id "/lists")))
 
-(comment
-  (lists "50bcfd2f033110476000e768"))
+(defn get-list
+  "Get a list by id"
+  [list-id]
+  (query/api :get (str "/lists/" list-id)))
 
 (defn add-list
   "Add a list - the name and the board id are mandatory (so i say!)."
@@ -38,9 +44,10 @@
   (query/post "/lists/" list-data))
 
 (comment
-  (add-list {:name "review"
-             :idBoard "50bcfd2f033110476000e768"})
-  (add-list {:name "review"}))
+  (def list-review
+    (add-list {:name "review"
+               :idBoard (:id board1)}))
+  (def list-todo (get-list "50bcfd2f033110476000e769")))
 
 (defn add-card
   "Add a card to a board"
@@ -48,36 +55,29 @@
   (query/post "/cards/" card-data))
 
 (comment
-  (add-card {:name "test"
-             :idList "51ccc748f7f9987320000cca"}))
+  (def card1
+    (add-card {:name "card test"
+               :idList (:id list-review)})))
 
 (defn list-cards
   [list-id]
   (query/api :get (str "/lists/" list-id "/cards/")))
 
-(comment
-  (list-cards "51ccc748f7f9987320000cca"))
-
-(defn nth-card-id
-  "Retrieve the nth card from the list-id"
-  [list-id n]
-  (-> list-id
-      list-cards
-      :body
-      (get n)
-      :id))
-
-(comment
-  (def card-id (nth-card-id "51ccc748f7f9987320000cca" 0)))
-
 (defn move-card
-  [{:keys [id] :as card-data}]
-  (query/put (str "/cards/" id) card-data))
+  [{:keys [id idList name] :as card-data}]
+  (query/put (str "/cards/" id) {:id id
+                                 :name name
+                                 :idList idList}))
 
 (comment
-  (add-card {:id "51ccca27a1b988f11300033c"
-             :name "renamingtestinplace"
-             :idList "50bcfd2f033110476000e769"}))
+  (def card1 (-> card1
+                 (assoc :idList (:id list-todo))
+                 (assoc :name "original name")
+                 move-card))
+  (def card1 (-> card1
+                 (assoc :idList (:id list-review))
+                 (assoc :name "name card to move")
+                 move-card)))
 
 (defn add-checklist
   "Add a checklist to a card"
@@ -86,22 +86,23 @@
   (query/post (str "/cards/" card-id "/checklists") {:name name}))
 
 (comment
-  (add-checklist {:card-id card-id
-                  :name "name-of-the-checklist"}))
+  (def checklist
+    (add-checklist {:card-id (:id card1)
+                    :name "name-of-the-checklist"})))
 
 (defn get-checklists
   [card-id]
   (query/api :get (str "/cards/" card-id "/checklists")))
 
 (comment
-  (get-checklists card-id))
+  (get-checklists (:id card1)))
 
 (defn get-checklist
   [id]
   (query/api :get (str "/checklists/" id)))
 
 (comment
-  (get-checklist "51cd3e1b12eb9c4d0300195f"))
+  (get-checklist (:id checklist)))
 
 (defn add-tasks
   "Add tasks (items) to a checklist with id 'id'"
@@ -112,5 +113,5 @@
       :body))
 
 (comment
-  (add-tasks {:checklist-id "51cd3e1b12eb9c4d0300195f"
+  (add-tasks {:checklist-id (:id checklist)
               :name "name-of-the-item"}))
