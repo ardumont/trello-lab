@@ -1,5 +1,6 @@
 (ns trello-lab.query
   "Query the trello api (the basic authentication scheme is implemented here)"
+  (:use [midje.sweet])
   (:require [clj-http.client   :as c]
             [clojure.string    :as s]))
 
@@ -21,9 +22,9 @@
   ([url path consumer-key secret-token]
      (format "%s&token=%s" (compute-url url path consumer-key) secret-token)))
 
-(comment
-  (compute-url URL "/members/ardumont")
-  (compute-url URL "/members/ardumont" "some-secret-token"))
+(fact
+  (compute-url URL "/members/ardumont" "consumer-key")                => "https://api.trello.com/1/members/ardumont?key=consumer-key"
+  (compute-url URL "/members/ardumont" "consumer-key" "secret-token") => "https://api.trello.com/1/members/ardumont?key=consumer-key&token=secret-token")
 
 (defn- compute-url-final
   [path]
@@ -39,6 +40,11 @@
        (merge req)
        c/request
        :body))
+
+(comment ;; reading public data without tokens
+  (api :get "/members/ardumont")
+  (api :get "/boards/4d5ea62fd76aa1136000000c")
+  (api :get "/organizations/fogcreek"))
 
 (defn- execute-post-or-put
   [fn-post-or-put path body]
@@ -56,28 +62,10 @@
   (post "/cards/" {:name "anothertest"
                    :desc "some other desc"
                    :idList "51ccc748f7f9987320000cca"}))
+
 (defn put "PUT" [path body] (execute-post-or-put c/put path body))
 
 (comment
   (put (str "/cards/51ccca27a1b988f11300033c") {:desc "trying-out-the-movement"
                                                 :name "renamingtestinplace"
                                                 :idList "50bcfd2f033110476000e769"}))
-
-(comment ;; reading public data without tokens
-  (api :get "/members/ardumont")
-  (api :get "/boards/4d5ea62fd76aa1136000000c")
-  (api :get "/organizations/fogcreek"))
-
-(comment ;; for private data, we need to ask for a token
-
-  ;; execute this code, then let do the stuff the browser asks you to
-  (clojure.java.browse/browse-url (get-token-from-url))
-
-  ;; Retrieve the secret token the browser gives you
-  (def secret-token org-trello-token-forever)
-
-  ;; now we can read/write to private data
-  (api :get "/members/me/boards" secret-token)
-
-  ;; list the cards of the board 50bcfd2f033110476000e768
-  (api :get "/board/50bcfd2f033110476000e768/lists" secret-token))
