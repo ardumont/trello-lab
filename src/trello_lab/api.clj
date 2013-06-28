@@ -109,9 +109,19 @@
   [{:keys [checklist-id name] :as items-data}]
   {:pre [(and checklist-id name)]}
   (-> (str "/checklists/" checklist-id "/checkItems")
-      (query/post {:name name})
-      :body))
+      (query/post {:name name})))
+
+(defn check-or-unchecked-tasks
+  "Update a task"
+  [{:keys [card-id checklist-id task-id state]}]
+  (-> (str "/cards/" card-id "/checklist/" checklist-id "/checkItem/" task-id)
+      (query/put {:state state})))
 
 (comment
-  (add-tasks {:checklist-id (:id checklist)
-              :name "name-of-the-item"}))
+  (def task (add-tasks {:checklist-id (:id checklist)
+                        :name "name-of-the-item"}))
+
+  (def task (check-or-unchecked-tasks {:card-id      (:id card1)
+                                       :task-id      (:id task)
+                                       :checklist-id (:id checklist)
+                                       :state        "complete"})))
