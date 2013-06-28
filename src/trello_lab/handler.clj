@@ -26,9 +26,9 @@
             response/get-json-response))
 
   (GET "/boards/:nature" [nature]
-       (->> (trello/get-boards)
+       (->> (trello/get-boards) ;; TODO use trello's natural filter...
             :body
-            (map (keyword nature))
+            (map (keyword nature));; ... instead of filtering after the http connection
             json/write-str
             response/get-json-response))
 
