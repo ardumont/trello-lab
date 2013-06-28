@@ -3,125 +3,179 @@
   (:require [trello-lab.query :as query]
             [clj-http.core :as http]))
 
+(defmulti xquery :method)
+
+(defmethod xquery :get
+  [{:keys [uri params]}]
+  (query/api :get uri params))
+
+(defmethod xquery :post
+  [{:keys [uri params]}]
+  (query/post uri params))
+
+(defmethod xquery :put
+  [{:keys [uri params]}]
+  (query/put uri params))
+
 (defn get-boards
   "Retrieve the boards of the current user."
   []
-  (query/api :get "/members/me/boards"))
+  {:method :get
+   :uri    "/members/me/boards"})
+
+(comment
+  (xquery (get-boards)))
 
 (defn get-board
   "Retrieve the boards of the current user."
   [id]
-  (query/api :get (str "/boards/" id)))
+  {:method :get
+   :uri    (str "/boards/" id)})
 
 (comment
-  (def boards (get-boards))
-  (def board1 (get-board "50bcfd2f033110476000e768")))
+  (def boards (xquery (get-boards)))
+  (def board1 (xquery (get-board "50bcfd2f033110476000e768"))))
 
 (defn get-cards
   "cards of a board"
   [board-id]
-  (query/api :get (str "/boards/" board-id "/cards")))
+  {:method :get
+   :uri    (str "/boards/" board-id "/cards")})
 
 (defn get-card
   "Detail of a card with id card-id."
   [card-id]
-  (query/api :get (str "/cards/" card-id)))
+  {:method :get
+   :uri    (str "/cards/" card-id)})
 
 (defn lists
   "Display the lists of the board"
   [board-id]
-  (query/api :get (str "/boards/" board-id "/lists")))
+  {:method :get
+   :uri    (str "/boards/" board-id "/lists")})
 
 (defn get-list
   "Get a list by id"
   [list-id]
-  (query/api :get (str "/lists/" list-id)))
+  {:method :get
+   :uri    (str "/lists/" list-id)})
 
 (defn add-list
   "Add a list - the name and the board id are mandatory (so i say!)."
   [{:keys [name idBoard] :as list-data}]
   {:pre [(and name idBoard)]}
-  (query/post "/lists/" list-data))
+  {:method :post
+   :uri    "/lists/"
+   :params list-data})
 
 (comment
   (def list-review
-    (add-list {:name "review"
-               :idBoard (:id board1)}))
-  (def list-todo (get-list "50bcfd2f033110476000e769")))
+    (-> {:name "review"
+         :idBoard (:id board1)}
+        add-list
+        xquery))
+
+  (def list-todo (-> "50bcfd2f033110476000e769"
+                     get-list
+                     xquery)))
 
 (defn add-card
   "Add a card to a board"
   [card-data]
-  (query/post "/cards/" card-data))
+  {:method :post
+   :uri "/cards/"
+   :params card-data})
 
 (comment
   (def card1
-    (add-card {:name "card test"
-               :idList (:id list-review)})))
+    (-> {:name "card test"
+         :idList (:id list-review)}
+        add-card
+        xquery)))
 
 (defn list-cards
   [list-id]
-  (query/api :get (str "/lists/" list-id "/cards/")))
+  {:method :get
+   :uri (str "/lists/" list-id "/cards/")})
 
 (defn move-card
   [{:keys [id idList name] :as card-data}]
-  (query/put (str "/cards/" id) {:id id
-                                 :name name
-                                 :idList idList}))
+  {:method :put
+   :uri     (str "/cards/" id)
+   :params {:id id
+            :name name
+            :idList idList}})
 
 (comment
   (def card1 (-> card1
                  (assoc :idList (:id list-todo))
                  (assoc :name "original name")
-                 move-card))
+                 move-card
+                 xquery))
   (def card1 (-> card1
                  (assoc :idList (:id list-review))
                  (assoc :name "name card to move")
-                 move-card)))
+                 move-card
+                 xquery)))
 
 (defn add-checklist
   "Add a checklist to a card"
   [{:keys [card-id name] :as checklist-data}]
   {:pre [(and card-id name)]}
-  (query/post (str "/cards/" card-id "/checklists") {:name name}))
+  {:method :post
+   :uri    (str "/cards/" card-id "/checklists")
+   :params {:name name}})
 
 (comment
   (def checklist
-    (add-checklist {:card-id (:id card1)
-                    :name "name-of-the-checklist"})))
+    (-> {:card-id (:id card1)
+         :name "name-of-the-checklist"}
+        add-checklist
+        xquery)))
 
 (defn get-checklists
   [card-id]
-  (query/api :get (str "/cards/" card-id "/checklists")))
+  {:method :get
+   :uri (str "/cards/" card-id "/checklists")})
 
 (comment
-  (get-checklists (:id card1)))
+  (-> (:id card1)
+      get-checklists
+      xquery))
 
 (defn get-checklist
   [id]
-  (query/api :get (str "/checklists/" id)))
+  {:method :get
+   :uri    (str "/checklists/" id)})
 
 (comment
-  (get-checklist (:id checklist)))
+  (-> (:id checklist)
+      get-checklist))
 
 (defn add-tasks
   "Add tasks (items) to a checklist with id 'id'"
   [{:keys [checklist-id name] :as items-data}]
   {:pre [(and checklist-id name)]}
-  (-> (str "/checklists/" checklist-id "/checkItems")
-      (query/post {:name name})))
+  {:method :post
+   :uri    (str "/checklists/" checklist-id "/checkItems")
+   :params {:name name}})
 
 (defn check-or-unchecked-tasks
   "Update a task"
   [{:keys [card-id checklist-id task-id state]}]
-  (-> (str "/cards/" card-id "/checklist/" checklist-id "/checkItem/" task-id)
-      (query/put {:state state})))
+  {:method :put
+   :uri (str "/cards/" card-id "/checklist/" checklist-id "/checkItem/" task-id)
+   :params {:state state}})
 
 (comment
-  (def task (add-tasks {:checklist-id (:id checklist)
-                        :name "name-of-the-item"}))
+  (def task (-> {:checklist-id (:id checklist)
+                 :name "name-of-the-item"}
+                add-tasks
+                xquery))
 
-  (def task (check-or-unchecked-tasks {:card-id      (:id card1)
-                                       :task-id      (:id task)
-                                       :checklist-id (:id checklist)
-                                       :state        "complete"})))
+  (def task (-> {:card-id      (:id card1)
+                 :task-id      (:id task)
+                 :checklist-id (:id checklist)
+                 :state        "complete"}
+                check-or-unchecked-tasks
+                xquery)))
