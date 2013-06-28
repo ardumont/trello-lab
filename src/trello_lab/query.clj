@@ -15,16 +15,12 @@
 
 (def URL "The needed prefix url for trello" "https://api.trello.com/1")
 
-(defn- compute-url
+(defn compute-url
   "Compute url with authentication needed."
   ([url path consumer-key]
      (format "%s%s?key=%s" url path consumer-key))
   ([url path consumer-key secret-token]
      (format "%s&token=%s" (compute-url url path consumer-key) secret-token)))
-
-(fact
-  (compute-url URL "/members/ardumont" "consumer-key")                => "https://api.trello.com/1/members/ardumont?key=consumer-key"
-  (compute-url URL "/members/ardumont" "consumer-key" "secret-token") => "https://api.trello.com/1/members/ardumont?key=consumer-key&token=secret-token")
 
 (defn- compute-url-final
   [path]
@@ -69,3 +65,17 @@
   (put (str "/cards/51ccca27a1b988f11300033c") {:desc "trying-out-the-movement"
                                                 :name "renamingtestinplace"
                                                 :idList "50bcfd2f033110476000e769"}))
+
+(defmulti execute :method)
+
+(defmethod execute :get
+  [{:keys [uri params]}]
+  (api :get uri params))
+
+(defmethod execute :post
+  [{:keys [uri params]}]
+  (post uri params))
+
+(defmethod execute :put
+  [{:keys [uri params]}]
+  (put uri params))

@@ -4,41 +4,6 @@
   (:require [trello-lab.query :as query]
             [clj-http.core :as http]))
 
-(defmulti xquery :method)
-
-(defmethod xquery :get
-  [{:keys [uri params]}]
-  (query/api :get uri params))
-
-(fact
-  (xquery {:method :get
-           :uri    :some-uri
-           :params :some-params}) => :res
-  (provided
-    (query/api :get :some-uri :some-params) => :res))
-
-(defmethod xquery :post
-  [{:keys [uri params]}]
-  (query/post uri params))
-
-(fact
-  (xquery {:method :post
-           :uri    :some-uri
-           :params :some-params}) => :res
-  (provided
-    (query/post :some-uri :some-params) => :res))
-
-(defmethod xquery :put
-  [{:keys [uri params]}]
-  (query/put uri params))
-
-(fact
-  (xquery {:method :put
-           :uri    :some-uri
-           :params :some-params}) => :res
-  (provided
-    (query/put :some-uri :some-params) => :res))
-
 (defn get-boards
   "Retrieve the boards of the current user."
   []
@@ -53,11 +18,11 @@
 
 (comment
   (def boards (-> (get-boards)
-                  xquery))
+                  query/execute))
   (def board1 (-> boards
                   :id
                   get-board
-                  xquery)))
+                  query/execute)))
 
 (defn get-cards
   "cards of a board"
@@ -96,11 +61,11 @@
     (-> {:name "review"
          :idBoard (:id board1)}
         add-list
-        xquery))
+        query/execute))
 
   (def list-todo (-> "50bcfd2f033110476000e769"
                      get-list
-                     xquery)))
+                     query/execute)))
 
 (defn add-card
   "Add a card to a board"
@@ -114,7 +79,7 @@
     (-> {:name "card test"
          :idList (:id list-review)}
         add-card
-        xquery)))
+        query/execute)))
 
 (defn list-cards
   [list-id]
@@ -134,12 +99,12 @@
                  (assoc :idList (:id list-todo))
                  (assoc :name "original name")
                  move-card
-                 xquery))
+                 query/execute))
   (def card1 (-> card1
                  (assoc :idList (:id list-review))
                  (assoc :name "name card to move")
                  move-card
-                 xquery)))
+                 query/execute)))
 
 (defn add-checklist
   "Add a checklist to a card"
@@ -154,7 +119,7 @@
     (-> {:card-id (:id card1)
          :name "name-of-the-checklist"}
         add-checklist
-        xquery)))
+        query/execute)))
 
 (defn get-checklists
   [card-id]
@@ -164,7 +129,7 @@
 (comment
   (-> (:id card1)
       get-checklists
-      xquery))
+      query/execute))
 
 (defn get-checklist
   [id]
@@ -174,7 +139,7 @@
 (comment
   (-> (:id checklist)
       get-checklist
-      xquery))
+      query/execute))
 
 (defn add-tasks
   "Add tasks (items) to a checklist with id 'id'"
@@ -195,11 +160,11 @@
   (def task (-> {:checklist-id (:id checklist)
                  :name "name-of-the-item"}
                 add-tasks
-                xquery))
+                query/execute))
 
   (def task (-> {:card-id      (:id card1)
                  :task-id      (:id task)
                  :checklist-id (:id checklist)
                  :state        "complete"}
                 check-or-unchecked-tasks
-                xquery)))
+                query/execute)))
