@@ -29,5 +29,3 @@ CLOSED: [2013-06-28 ven. 01:51]
 ** TODO Create cards + Checklist + tasks from one org-mode entry
 ** TODO Create cards + Checklist + tasks from existing org-mode file
 ** TODO Prefill a org-mode file from the trello board
-* TODO Workflow
-Describe use case.
