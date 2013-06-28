@@ -1,5 +1,6 @@
 (ns trello-lab.api
   "Wrapper around the trello api"
+  (:use [midje.sweet])
   (:require [trello-lab.query :as query]
             [clj-http.core :as http]))
 
@@ -9,13 +10,34 @@
   [{:keys [uri params]}]
   (query/api :get uri params))
 
+(fact
+  (xquery {:method :get
+           :uri    :some-uri
+           :params :some-params}) => :res
+  (provided
+    (query/api :get :some-uri :some-params) => :res))
+
 (defmethod xquery :post
   [{:keys [uri params]}]
   (query/post uri params))
 
+(fact
+  (xquery {:method :post
+           :uri    :some-uri
+           :params :some-params}) => :res
+  (provided
+    (query/post :some-uri :some-params) => :res))
+
 (defmethod xquery :put
   [{:keys [uri params]}]
   (query/put uri params))
+
+(fact
+  (xquery {:method :put
+           :uri    :some-uri
+           :params :some-params}) => :res
+  (provided
+    (query/put :some-uri :some-params) => :res))
 
 (defn get-boards
   "Retrieve the boards of the current user."
