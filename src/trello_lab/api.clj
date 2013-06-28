@@ -89,6 +89,13 @@
   (add-checklist {:card-id card-id
                   :name "name-of-the-checklist"}))
 
+(defn get-checklists
+  [card-id]
+  (query/api :get (str "/cards/" card-id "/checklists")))
+
+(comment
+  (get-checklists card-id))
+
 (defn add-tasks
   "Add tasks (items) to a checklist with id 'id'"
   [{:keys [checklist-id name] :as items-data}]
@@ -96,8 +103,6 @@
   (query/post (str "/checklists/" checklist-id "/checkItems") (-> items-data
                                                                   (dissoc :id)
                                                                   (assoc :checked false))))
-
-;; TODO test when network
 (comment
   (add-tasks {:checklist-id "51ccca27a1b988f11300033c"
               :name "name-of-the-items-tasks"}))
