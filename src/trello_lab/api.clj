@@ -74,3 +74,11 @@
   (query/post (str "/cards/" idCard "/checklists") {:name name}))
 
 ;; TODO test when network
+
+(defn add-tasks
+  "Add tasks (items) to a checklist with id 'id'"
+  [{:keys [id name checked] :as items-data}]
+  {:pre [(and id name checked)]}
+  (query/post (str "/checklists/" id "/checkItems") (dissoc :id items-data)))
+
+;; TODO test when network
