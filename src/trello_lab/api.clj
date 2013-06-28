@@ -96,13 +96,19 @@
 (comment
   (get-checklists card-id))
 
+(defn get-checklist
+  [id]
+  (query/api :get (str "/checklists/" id)))
+
+(comment
+  (get-checklist "51cd3e1b12eb9c4d0300195f"))
+
 (defn add-tasks
   "Add tasks (items) to a checklist with id 'id'"
   [{:keys [checklist-id name] :as items-data}]
   {:pre [(and checklist-id name)]}
-  (query/post (str "/checklists/" checklist-id "/checkItems") (-> items-data
-                                                                  (dissoc :id)
-                                                                  (assoc :checked false))))
+  (query/post (str "/checklists/" checklist-id "/checkItems") {:name name}))
+
 (comment
-  (add-tasks {:checklist-id "51ccca27a1b988f11300033c"
-              :name "name-of-the-items-tasks"}))
+  (add-tasks {:checklist-id "51cd3e1b12eb9c4d0300195f"
+              :name "name-of-the-item"}))
