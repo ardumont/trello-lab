@@ -66,3 +66,11 @@
   (add-card {:id "51ccca27a1b988f11300033c"
              :name "renamingtestinplace"
              :idList "50bcfd2f033110476000e769"}))
+
+(defn add-checklist
+  "Add a checklist to a card"
+  [{:keys [idCard name] :as checklist-data}]
+  {:pre [(and idCard name)]}
+  (query/post (str "/cards/" idCard "/checklists") {:name name}))
+
+;; TODO test when network
