@@ -66,6 +66,7 @@
                                                 :name "renamingtestinplace"
                                                 :idList "50bcfd2f033110476000e769"}))
 
+;; Main entry point for the api namespace to execute query from a map datastructure representing the rest resource to ask for
 (defmulti execute :method)
 
 (defmethod execute :get
