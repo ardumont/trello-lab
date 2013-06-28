@@ -69,16 +69,24 @@
 
 (defn add-checklist
   "Add a checklist to a card"
-  [{:keys [idCard name] :as checklist-data}]
-  {:pre [(and idCard name)]}
-  (query/post (str "/cards/" idCard "/checklists") {:name name}))
+  [{:keys [card-id name] :as checklist-data}]
+  {:pre [(and card-id name)]}
+  (query/post (str "/cards/" card-id "/checklists") {:name name}))
 
 ;; TODO test when network
+(comment
+  (add-checklist {:card-id "51ccca27a1b988f11300033c"
+                  :name "name-of-the-checklist"}))
 
 (defn add-tasks
   "Add tasks (items) to a checklist with id 'id'"
-  [{:keys [id name checked] :as items-data}]
-  {:pre [(and id name checked)]}
-  (query/post (str "/checklists/" id "/checkItems") (dissoc :id items-data)))
+  [{:keys [checklist-id name] :as items-data}]
+  {:pre [(and checklist-id name)]}
+  (query/post (str "/checklists/" checklist-id "/checkItems") (-> items-data
+                                                                  (dissoc :id)
+                                                                  (assoc :checked false))))
 
 ;; TODO test when network
+(comment
+  (add-tasks {:checklist-id "51ccca27a1b988f11300033c"
+              :name "name-of-the-items-tasks"}))
