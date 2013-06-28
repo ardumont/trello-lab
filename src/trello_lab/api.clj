@@ -45,9 +45,6 @@
   {:method :get
    :uri    "/members/me/boards"})
 
-(comment
-  (xquery (get-boards)))
-
 (defn get-board
   "Retrieve the boards of the current user."
   [id]
@@ -55,8 +52,12 @@
    :uri    (str "/boards/" id)})
 
 (comment
-  (def boards (xquery (get-boards)))
-  (def board1 (xquery (get-board "50bcfd2f033110476000e768"))))
+  (def boards (-> (get-boards)
+                  xquery))
+  (def board1 (-> boards
+                  :id
+                  get-board
+                  xquery)))
 
 (defn get-cards
   "cards of a board"
@@ -172,7 +173,8 @@
 
 (comment
   (-> (:id checklist)
-      get-checklist))
+      get-checklist
+      xquery))
 
 (defn add-tasks
   "Add tasks (items) to a checklist with id 'id'"
