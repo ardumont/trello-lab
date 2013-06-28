@@ -68,7 +68,7 @@
       :id))
 
 (comment
-  (nth-card-id "51ccc748f7f9987320000cca" 0))
+  (def card-id (nth-card-id "51ccc748f7f9987320000cca" 0)))
 
 (defn move-card
   [{:keys [id] :as card-data}]
@@ -85,9 +85,8 @@
   {:pre [(and card-id name)]}
   (query/post (str "/cards/" card-id "/checklists") {:name name}))
 
-;; TODO test when network
 (comment
-  (add-checklist {:card-id "51ccca27a1b988f11300033c"
+  (add-checklist {:card-id card-id
                   :name "name-of-the-checklist"}))
 
 (defn add-tasks
