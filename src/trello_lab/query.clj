@@ -39,25 +39,22 @@
        (merge req)
        c/request))
 
-(defn post
-  "POST"
-  [path body]
+(defn- execute-post-or-put
+  [fn-post-or-put path body]
   (-> path
       compute-url-final
-      (c/post {:form-params body
-               :content-type :json})))
+      (fn-post-or-put {:form-params  body
+                       :content-type :json
+                       :accept       :json
+                       :as           :json})))
+
+(defn post "POST" [path body] (execute-post-or-put c/post path body))
 
 (comment
   (post "/cards/" {:name "anothertest"
                    :desc "some other desc"
                    :idList "51ccc748f7f9987320000cca"}))
-(defn put
-  "PUT"
-  [path body]
-  (-> path
-      compute-url-final
-      (c/put {:form-params body
-              :content-type :json})))
+(defn put "PUT" [path body] (execute-post-or-put c/put path body))
 
 (comment
   (put (str "/cards/51ccca27a1b988f11300033c") {:desc "trying-out-the-movement"
