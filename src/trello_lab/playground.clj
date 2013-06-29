@@ -17,6 +17,13 @@
         add-list
         query/execute))
 
+  (def list-todo (->> board1
+                      :id
+                      lists
+                      query/execute
+                      (filter #(= (:name %) "Todo"))
+                      first))
+
   (def list-doing (->> board1
                        :id
                        lists
@@ -24,11 +31,16 @@
                        (filter #(= (:name %) "Doing"))
                        first))
 
+  ;; (:id list-todo)  ;; "51cf0075e3c810c452000d29"
+  ;; (:id list-doing) ;; "50bcfd2f033110476000e76a"
+
   (def card1
     (-> {:name "card test"
          :idList (:id list-todo)}
         add-card
         query/execute))
+
+  ;; (card1 :id);; "51cf011238239ebc3a000626"
 
   (def card1 (-> card1
                  (assoc :idList (:id list-todo))
