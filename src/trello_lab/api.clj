@@ -1,6 +1,5 @@
 (ns trello-lab.api
   "Wrapper around the trello api"
-  (:use [midje.sweet])
   (:require [trello-lab.query :as query]
             [clj-http.core :as http]))
 
