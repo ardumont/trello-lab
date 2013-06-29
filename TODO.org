@@ -1,13 +1,16 @@
 #+title: Basic manipulation of trello board through API
 #+author: Antoine R. Dumont
 
+This is just building block to play with trello api so that I can be able to port such work into emacs-lisp for doing the same tricks.
+
 * DONE Authentication
 CLOSED: [2013-06-28 ven. 01:19]
 ** DONE basic
 CLOSED: [2013-06-28 ven. 01:19]
 ** DONE oauth
 CLOSED: [2013-06-28 ven. 01:19]
-* IN-PROGRESS Basic Manipulation [75%]
+* DONE Basic Manipulation [75%]
+CLOSED: [2013-06-29 sam. 10:49]
 ** DONE list lists
 CLOSED: [2013-06-28 ven. 01:20]
 ** DONE add list
@@ -26,10 +29,11 @@ CLOSED: [2013-06-29 sam. 00:46]
 CLOSED: [2013-06-29 sam. 00:46]
 ** DONE Uncheck task
 CLOSED: [2013-06-29 sam. 00:46]
+* TODO Automatic - Debatable to implement
 ** TODO Move card to doing when checking a first task in checklist
 ** TODO Move card to done when all tasks done (checked)
 ** TODO Move card to todo when all tasks todo
 * TODO Import Manipulation [0%]
-** TODO Create cards + Checklist + tasks from one org-mode entry
-** TODO Create cards + Checklist + tasks from existing org-mode file
-** TODO Prefill a org-mode file from the trello board
+** TODO Given an org-mode entry trelloable, create cards + checklists + tasks from it
+** TODO Given an org-mode file trelloable, create cards + checklists + tasks from it
+** TODO Given a trello file, build an org-mode file
