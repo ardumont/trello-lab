@@ -62,8 +62,7 @@
   [{:keys [id idList name] :as card-data}]
   {:method :put
    :uri     (str "/cards/" id)
-   :params {:id id
-            :name name
+   :params {:name name
             :idList idList}})
 
 (defn add-checklist

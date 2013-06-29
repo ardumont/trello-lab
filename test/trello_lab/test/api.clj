@@ -38,6 +38,5 @@
               :name :n
               :idList :i}) => {:method :put
                                :uri     "/cards/:id"
-                               :params {:id :id
-                                        :name :n
+                               :params {:name :n
                                         :idList :i}})
