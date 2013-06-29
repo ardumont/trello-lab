@@ -1,7 +1,6 @@
 (ns trello-lab.api
   "Wrapper around the trello api"
-  (:require [trello-lab.query :as query]
-            [clj-http.core :as http]))
+  (:require [trello-lab.query :as query]))
 
 (defn get-boards
   "Retrieve the boards of the current user."
