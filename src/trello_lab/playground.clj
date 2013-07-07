@@ -8,7 +8,7 @@
   (def boards (-> (get-boards)
                   query/execute))
   (def board1 (->> boards
-                   (filter #(= (:name %) "api test board"))
+                   (filter (fn [b] (and (= (:name b) "api test board") (not (:closed b)))))
                    first))
 
   (def list-todo
