@@ -21,7 +21,7 @@
                       :id
                       lists
                       query/execute
-                      (filter #(= (:name %) "Todo"))
+                      (filter #(= (:name %) "todo"))
                       first))
 
   (def list-doing (->> board1
@@ -54,6 +54,12 @@
                  move-card
                  query/execute))
 
+  (def card1 (-> board1
+                 :id
+                 get-cards
+                 query/execute
+                 first))
+
   (def checklist
     (-> {:card-id (:id card1)
          :name "my first checklist"}
@@ -75,4 +81,10 @@
                  :checklist-id (:id checklist)
                  :state        "incomplete"}
                 check-or-unchecked-tasks
-                query/execute)))
+                query/execute))
+
+  (def tasks (-> checklists1
+                 first
+                 :id
+                 get-items
+                 query/execute)))
