@@ -54,10 +54,12 @@
                  move-card
                  query/execute))
 
-  (def card1 (-> board1
+  (def cards (-> board1
                  :id
                  get-cards
-                 query/execute
+                 query/execute))
+
+  (def card1 (-> cards
                  first))
 
   (def checklist
