@@ -22,7 +22,7 @@ In :mode :replay, every requests are replayed if they already had been recorded.
          :mode       "record"
          ;; the server uri to send requests to and register the response from for later 'faking' it.
          :server-uri ""
-         ;; the registered requests
+         ;; the registered pair request/response
          :requests   {}}))
 
 (defn get-data "Retrieve the metadata."
@@ -73,29 +73,54 @@ In :mode :replay, every requests are replayed if they already had been recorded.
 
   ;; ######### part, will record any api call, call the right server
 
-  ;; main routes
-  (GET "/boards/" []
-       (->> (trello/get-boards)
-            json/write-str
-            response/get-json-response))
-
-  (GET "/boards/:nature" [nature]
-       (->> (trello/get-boards) ;; TODO use trello's natural filter...
-            (map (keyword nature));; ... instead of filtering after the http connection
-            json/write-str
-            response/get-json-response))
-
-  ;; create card in the board
-  ;; create checklist in the card
-  ;; add tasks to the checklist
-
   ;; any other route
   (route/not-found "Not Found"))
+
+(defn- cleanup-response-or-request "Takes a request or response map and clean it up according to the app config."
+  [request]
+  (let [ignore-seq     [:ssl-client-cert :remote-addr :server-name :server-port]
+        ignore-headers ["host"]]
+    (-> ignore-seq
+        (->> (cons request))
+        (->> (apply dissoc))
+        (update-in [:headers] #(apply dissoc (cons % ignore-headers))))))
+
+(def do-action nil)
+;; The actual action that takes place (either record or replay requests)
+(defmulti do-action (fn [metadata _ _] (:mode @metadata)))
+
+(defmethod do-action "record"
+  [metadata handler request]
+  ;; change the uri from this proxy to the server-uri entry
+  (let [server-uri (get-in @metadata [:server-uri])
+        resp (-> request handler cleanup-response-or-request)
+        requ (cleanup-response-or-request request)]
+    (swap! metadata #(assoc-in % [:requests requ] resp))
+    resp))
+
+(defmethod do-action "replay"
+  [metadata _ request]
+  ;; retrieve the request
+  ;; send the recorded response to such request
+  (get-in @metadata [:requests (cleanup-response-or-request request)]))
+
+(defn wrap-action "A middleware that records the http request / response into an atom"
+  [handler metadata]
+  (fn [request]
+    (do-action metadata handler request)))
 
 (def app
   (-> app-routes
       middleware/wrap-error-handling
+      (wrap-action metadata)
       handler/site))
+
+;; ######### Running the server from the repl
+
+(declare jetty-server
+         stop)
+
+(if (bound? #'jetty-server) (stop))
 
 (def jetty-server
   (ring-jetty/run-jetty app {:port  3000

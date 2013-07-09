@@ -3,7 +3,7 @@
   (:require [trello-lab.http.response :as response]
             [clojure.data.json        :as json]))
 
-(defn wrap-error-handling
+(defn wrap-error-handling "A middleware to deal with basic error"
   [handler]
   (fn [req]
     (try
