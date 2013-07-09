@@ -13,7 +13,8 @@
              [middleware    :as middleware]]
             [clojure.data.json :as json]))
 
-(def metadata "In :mode :record, record every requests and responses. In :mode :replay, answer every requests according to records."
+(def metadata "In :mode \"record\", every requests and responses are recorded.
+In :mode :replay, every requests are replayed if they already had been recorded."
   (atom {;; possible modes:
          ;; - "record" to record every request/response
          ;; - "replay" to replay every recorded request/response
@@ -28,22 +29,21 @@
   (select-keys m [:mode :server-uri]))
 
 (defn change-metadata! "Update the data (server-uri, mode, etc...)."
-  [{:keys [mode server-uri]}]
+  [{:keys [mode server-uri]} m]
   {:pre [(or (= mode "record") (= mode "replay"))]}
   (do
     ;; update data
-    (if mode       (swap! metadata #(assoc % :mode mode)))
-    (if server-uri (swap! metadata #(assoc % :server-uri server-uri)))
+    (if mode       (swap! m #(assoc % :mode mode)))
+    (if server-uri (swap! m #(assoc % :server-uri server-uri)))
     ;; return the updated data
-    (get-data @metadata)))
+    (get-data @m)))
 
 (defn read-body "Read the body from the inputed requests"
   [body]
   (-> body
       (slurp :encoding "UTF-8")
       json/read-str
-      clojure.walk/keywordize-keys)
-  )
+      clojure.walk/keywordize-keys))
 
 (defroutes app-routes
   ;; dummy route to explain what this api is
@@ -62,7 +62,7 @@
   (PUT "/metadata/" {body :body}
        (-> body
            read-body
-           change-metadata!
+           (change-metadata! metadata)
            json/write-str
            u/trace
            response/put-json-response))
