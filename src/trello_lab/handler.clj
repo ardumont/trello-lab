@@ -3,15 +3,16 @@
   (:use [compojure.core :only [defroutes POST GET PUT]]
         [expectations])
   (:require [compojure
-             [core          :as comp]
-             [handler       :as handler]
-             [route         :as route]]
+             [core                    :as comp]
+             [handler                 :as handler]
+             [route                   :as route]]
             [trello-lab.utils.utility :as u]
-            [trello-lab.api :as trello]
+            [trello-lab.api           :as trello]
             [trello-lab.http
-             [response      :as response]
-             [middleware    :as middleware]]
-            [clojure.data.json :as json]))
+             [response                :as response]
+             [middleware              :as middleware]]
+            [clojure.data.json        :as json]
+            [ring.adapter.jetty       :as ring-jetty]))
 
 (def metadata "In :mode \"record\", every requests and responses are recorded.
 In :mode :replay, every requests are replayed if they already had been recorded."
@@ -46,11 +47,14 @@ In :mode :replay, every requests are replayed if they already had been recorded.
       clojure.walk/keywordize-keys))
 
 (defroutes app-routes
-  ;; dummy route to explain what this api is
+  ;; ######### Description part
+
   (GET "/" []
        (-> {:description "trello-lab - REST API to deal with the board updates of your trello - This is to be used with emacs's org-trello mode."}
             json/write-str
             response/get-json-response))
+
+  ;; ######### Setup api part
 
   ;; API to deal with the registering mode or not
   (GET "/metadata/" []
@@ -67,7 +71,8 @@ In :mode :replay, every requests are replayed if they already had been recorded.
            u/trace
            response/put-json-response))
 
-  ;; Proxy part, will record any api call, call the right server
+  ;; ######### part, will record any api call, call the right server
+
   ;; main routes
   (GET "/boards/" []
        (->> (trello/get-boards)
@@ -91,3 +96,16 @@ In :mode :replay, every requests are replayed if they already had been recorded.
   (-> app-routes
       middleware/wrap-error-handling
       handler/site))
+
+(def jetty-server
+  (ring-jetty/run-jetty app {:port  3000
+                             :join? false}))
+
+(defn start   [] (.start jetty-server))
+(defn stop    [] (.stop  jetty-server))
+(defn restart [] (stop) (start))
+
+(comment
+  (start)
+  (stop)
+  (restart))
