@@ -2,7 +2,8 @@
   (:use [trello-lab.handler]
         [ring.mock.request]
         [expectations])
-  (:require [clojure.data.json :as json]))
+  (:require [clojure.data.json :as json])
+  (:import [java.io InputStream]))
 
 (expect {:status 200
          :headers {"Content-Type" "application/json"}
@@ -25,3 +26,13 @@
          :server-uri "some-new-uri"}
         (change-metadata! {:mode "replay" :server-uri "some-new-uri"}
                           (atom {:mode "some-other-record-mode" :server-uri ""})))
+
+
+(expect {:mode "recode"
+         :server-uri "some-server"}
+ (-> {"mode" "recode"
+      "server-uri" "some-server"}
+     json/write-str
+     (.getBytes "UTF-8")
+     (java.io.ByteArrayInputStream.)
+     read-body))
