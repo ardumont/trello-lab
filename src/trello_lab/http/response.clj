@@ -20,5 +20,8 @@
 (defn get-json-response "Answer a request with json mime type and the message m"
   [m] (json-response m 200))
 
+(defn put-json-response "Answer a request with json mime type and the message m"
+  [m] (json-response m 201))
+
 (defn post-json-response "Answer a request with json mime type and the message m"
   [m] (with-status-content-type-message 201 json-type m))
