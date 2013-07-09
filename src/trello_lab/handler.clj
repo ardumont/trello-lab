@@ -21,7 +21,7 @@ In :mode :replay, every requests are replayed if they already had been recorded.
          ;; - "replay" to replay every recorded request/response
          :mode       "record"
          ;; the server uri to send requests to and register the response from for later 'faking' it.
-         :server-uri ""
+         :server-uri "https://api.trello.com/1"
          ;; the registered pair request/response
          :requests   {}}))
 
@@ -92,8 +92,9 @@ In :mode :replay, every requests are replayed if they already had been recorded.
 (defmethod do-action "record"
   [metadata handler request]
   ;; change the uri from this proxy to the server-uri entry
-  (let [server-uri (get-in @metadata [:server-uri])
-        resp (-> request handler cleanup-response-or-request)
+  (let [resp (-> request
+                 handler
+                 cleanup-response-or-request)
         requ (cleanup-response-or-request request)]
     (swap! metadata #(assoc-in % [:requests requ] resp))
     resp))
@@ -109,9 +110,21 @@ In :mode :replay, every requests are replayed if they already had been recorded.
   (fn [request]
     (do-action metadata handler request)))
 
+(defn wrap-proxy "Do the request to the real server."
+  [handler metadata]
+  (fn [request]
+    (let [server-uri (get-in @metadata [:server-uri])
+          new-request (-> request
+                          (assoc     :url       (str server-uri (:uri request)))
+                          (update-in [:headers] dissoc "content-length"))]
+      (handler (u/trace :new-request new-request)))))
+
 (def app
   (-> app-routes
       middleware/wrap-error-handling
+      ;; compute the request for the real server
+      (wrap-proxy metadata)
+      ;; record or replay the request
       (wrap-action metadata)
       handler/site))
 
