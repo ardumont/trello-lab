@@ -88,6 +88,11 @@
   {:method :get
    :uri    (str "/checklists/" checklist-id "/checkItems/")})
 
+(defn get-item
+  [checklist-id check-item-id]
+  {:method :get
+   :uri    (str "/checklists/" checklist-id "/checkItems/" check-item-id)})
+
 (defn add-tasks
   "Add tasks (items) to a checklist with id 'id'"
   [{:keys [checklist-id name] :as items-data}]
