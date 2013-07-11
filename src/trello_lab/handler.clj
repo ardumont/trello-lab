@@ -83,6 +83,7 @@ In :mode :replay, every requests are replayed if they already had been recorded.
   (GET "/metadata/load/" []
        (-> ".metadata/metadata.clj"
            (slurp :encoding "UTF-8")
+           read-string
            (change-metadata! metadata)
            json/write-str
            response/get-json-response))
