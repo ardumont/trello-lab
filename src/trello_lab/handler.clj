@@ -39,7 +39,7 @@ In :mode :replay, every requests are replayed if they already had been recorded.
     ;; return the updated data
     (get-data @m)))
 
-(defn read-body "Read the body from the inputed requests"
+(defn read-body "Read the body from the requests"
   [body]
   (-> body
       (slurp :encoding "UTF-8")
@@ -71,7 +71,21 @@ In :mode :replay, every requests are replayed if they already had been recorded.
            u/trace
            response/put-json-response))
 
-  ;; ######### part, will record any api call, call the right server
+  (PUT "/metadata/save/" []
+       (do
+         ;; store any metadata on disk (do not check anything)
+         (spit ".metadata/metadata.clj" @metadata :encoding "UTF-8")
+         ;; send a description of what has been done
+         (-> {:description "saving metadata on '.metadata/metadata.clj' done!"}
+             json/write-str
+             response/put-json-response)))
+
+  (GET "/metadata/load/" []
+       (-> ".metadata/metadata.clj"
+           (slurp :encoding "UTF-8")
+           (change-metadata! metadata)
+           json/write-str
+           response/get-json-response))
 
   ;; any other route
   (route/not-found "Not Found"))
@@ -138,7 +152,6 @@ In :mode :replay, every requests are replayed if they already had been recorded.
       (wrap-proxy metadata)
       ;; record or replay the request
       (wrap-action metadata)))
-
 
 (comment ;; ######### Running the admin (server permitting the setup of the proxy) and the proxy (in charge of recording/replaying the requests)
 
