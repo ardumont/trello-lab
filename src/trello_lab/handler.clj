@@ -27,15 +27,15 @@ In :mode :replay, every requests are replayed if they already had been recorded.
 
 (defn get-data "Retrieve the metadata."
   [m]
-  (select-keys m [:mode :server-uri]))
+  (select-keys m [:mode :server-uri :requests]))
 
-(defn change-metadata! "Update the data (server-uri, mode, etc...)."
-  [{:keys [mode server-uri]} m]
-  {:pre [(or (= mode "record") (= mode "replay"))]}
+(defn change-metadata! "Update the data (server-uri, requests - loading requests, mode - only 'record' or 'replay', etc...)."
+  [{:keys [mode server-uri requests]} m]
   (do
     ;; update data
     (if mode       (swap! m #(assoc % :mode mode)))
     (if server-uri (swap! m #(assoc % :server-uri server-uri)))
+    (if requests   (swap! m #(assoc % :requests requests)))
     ;; return the updated data
     (get-data @m)))
 
@@ -46,7 +46,7 @@ In :mode :replay, every requests are replayed if they already had been recorded.
       json/read-str
       clojure.walk/keywordize-keys))
 
-(defroutes app-routes
+(defroutes app-admin-routes
   ;; ######### Description part
 
   (GET "/" []
@@ -119,31 +119,56 @@ In :mode :replay, every requests are replayed if they already had been recorded.
                           (update-in [:headers] dissoc "content-length"))]
       (handler (u/trace :new-request new-request)))))
 
-(def app
-  (-> app-routes
+(def app-admin
+  (-> app-admin-routes
+      middleware/wrap-error-handling
+      handler/site))
+
+(defn app-proxy-routes "Basic routes. The intelligence for such routes is null. We need this to record or replay requests."
+  [request]
+  (-> {:description "Proxy in charge or recording/replaying requests."}
+      json/write-str
+      response/get-json-response))
+
+(def app-proxy "App to record or replay requests"
+  (-> app-proxy-routes
+      ;; deal with basic errors
       middleware/wrap-error-handling
       ;; compute the request for the real server
       (wrap-proxy metadata)
       ;; record or replay the request
-      (wrap-action metadata)
-      handler/site))
+      (wrap-action metadata)))
 
-;; ######### Running the server from the repl
+;; ######### Running the admin (server permitting the setup of the proxy) and the proxy (in charge of recording/replaying the requests)
 
-(declare jetty-server
-         stop)
+(declare jetty-admin
+         jetty-proxy
+         stop-admin
+         stop-proxy)
 
-(if (bound? #'jetty-server) (stop))
+(if (bound? #'jetty-admin) (stop-admin))
+(if (bound? #'jetty-proxy) (stop-proxy))
 
-(def jetty-server
-  (ring-jetty/run-jetty app {:port  3000
-                             :join? false}))
+(def jetty-admin
+  (ring-jetty/run-jetty app-admin {:port  3000
+                                   :join? false}))
+(def jetty-proxy
+  (ring-jetty/run-jetty app-proxy {:port  3001
+                                   :join? false}))
 
-(defn start   [] (.start jetty-server))
-(defn stop    [] (.stop  jetty-server))
-(defn restart [] (stop) (start))
+(defn start-admin   [] (.start jetty-admin))
+(defn stop-admin    [] (.stop  jetty-admin))
+(defn restart-admin [] (stop-admin) (start-admin))
+
+(defn start-proxy   [] (.start jetty-proxy))
+(defn stop-proxy    [] (.stop  jetty-proxy))
+(defn restart-proxy [] (stop-proxy) (start-proxy))
 
 (comment
-  (start)
-  (stop)
-  (restart))
+  (start-admin)
+  (stop-admin)
+  (restart-admin)
+
+  (start-proxy)
+  (stop-proxy)
+  (restart-proxy))
