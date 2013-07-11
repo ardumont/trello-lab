@@ -139,32 +139,32 @@ In :mode :replay, every requests are replayed if they already had been recorded.
       ;; record or replay the request
       (wrap-action metadata)))
 
-;; ######### Running the admin (server permitting the setup of the proxy) and the proxy (in charge of recording/replaying the requests)
 
-(declare jetty-admin
-         jetty-proxy
-         stop-admin
-         stop-proxy)
+(comment ;; ######### Running the admin (server permitting the setup of the proxy) and the proxy (in charge of recording/replaying the requests)
 
-(if (bound? #'jetty-admin) (stop-admin))
-(if (bound? #'jetty-proxy) (stop-proxy))
+  (declare jetty-admin
+           jetty-proxy
+           stop-admin
+           stop-proxy)
 
-(def jetty-admin
-  (ring-jetty/run-jetty app-admin {:port  3000
-                                   :join? false}))
-(def jetty-proxy
-  (ring-jetty/run-jetty app-proxy {:port  3001
-                                   :join? false}))
+  (if (bound? #'jetty-admin) (stop-admin))
+  (if (bound? #'jetty-proxy) (stop-proxy))
 
-(defn start-admin   [] (.start jetty-admin))
-(defn stop-admin    [] (.stop  jetty-admin))
-(defn restart-admin [] (stop-admin) (start-admin))
+  (def jetty-admin
+    (ring-jetty/run-jetty app-admin {:port  3000
+                                     :join? false}))
+  (def jetty-proxy
+    (ring-jetty/run-jetty app-proxy {:port  3001
+                                     :join? false}))
 
-(defn start-proxy   [] (.start jetty-proxy))
-(defn stop-proxy    [] (.stop  jetty-proxy))
-(defn restart-proxy [] (stop-proxy) (start-proxy))
+  (defn start-admin   [] (.start jetty-admin))
+  (defn stop-admin    [] (.stop  jetty-admin))
+  (defn restart-admin [] (stop-admin) (start-admin))
 
-(comment
+  (defn start-proxy   [] (.start jetty-proxy))
+  (defn stop-proxy    [] (.stop  jetty-proxy))
+  (defn restart-proxy [] (stop-proxy) (start-proxy))
+
   (start-admin)
   (stop-admin)
   (restart-admin)
