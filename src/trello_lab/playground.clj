@@ -21,7 +21,7 @@
                       :id
                       lists
                       query/execute
-                      (filter #(= (:name %) "todo"))
+                      (filter #(= (:name %) "TODO"))
                       first))
 
   (def list-doing (->> board1
@@ -36,7 +36,8 @@
 
   (def card1
     (-> {:name "card test"
-         :idList (:id list-todo)}
+         :idList (:id list-todo)
+         :due "2013-07-29T08:00:00.000Z"}
         add-card
         query/execute))
 
@@ -44,7 +45,8 @@
 
   (def card1 (-> card1
                  (assoc :idList (:id list-todo))
-                 (assoc :name "some original name")
+                 ;; (assoc :name "some original name")
+                 (assoc :due "2013-07-28T10:00:00.000Z")
                  move-card
                  query/execute))
 
