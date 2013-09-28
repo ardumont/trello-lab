@@ -61,6 +61,10 @@
                  get-cards
                  query/execute))
 
+  (def card-joy (->> cards
+                     (filter #(= (:name %) "Joy of FUN(ctional) LANGUAGES"))
+                     first))
+
   (def card1 (-> cards
                  first))
 
