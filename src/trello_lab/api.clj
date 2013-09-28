@@ -2,6 +2,11 @@
   "Wrapper around the trello api"
   (:require [trello-lab.query :as query]))
 
+(defn get-me "Retrieve one's informations."
+  []
+  {:method :get
+   :uri "/members/me"})
+
 (defn get-boards
   "Retrieve the boards of the current user."
   []
