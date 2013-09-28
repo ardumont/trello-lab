@@ -113,3 +113,8 @@
   {:method :put
    :uri (str "/cards/" card-id "/checklist/" checklist-id "/checkItem/" task-id)
    :params {:state state}})
+
+(defn get-user "Retrieve the user."
+  [user-id]
+  {:method :get
+   :uri (str "/members/" user-id)})

@@ -95,4 +95,12 @@
                  first
                  :id
                  get-items
-                 query/execute)))
+                 query/execute))
+
+  (def me (-> (get-me)
+              query/execute))
+
+  (def user (-> me
+                :id
+                get-user
+                query/execute)))
