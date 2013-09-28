@@ -46,6 +46,13 @@ In :mode :replay, every requests are replayed if they already had been recorded.
       json/read-str
       clojure.walk/keywordize-keys))
 
+;; (defn cleanup-metadata "Given the map of metadata, cleanup and return the cleanup meta"
+;;   [meta]
+;;   (update-in meta [:requests] #(reduce
+;;                                 (fn [n [request response]]
+;;                                   (assoc n (update-in request [:body] read-body) response))
+;;                                 %)))
+
 (defroutes app-admin-routes
   ;; ######### Description part
 
@@ -94,11 +101,12 @@ In :mode :replay, every requests are replayed if they already had been recorded.
 (defn- cleanup-response-or-request "Takes a request or response map and clean it up according to the app config."
   [request]
   (let [ignore-seq     [:ssl-client-cert :remote-addr :server-name :server-port]
-        ignore-headers ["host"]]
-    (-> ignore-seq
-        (->> (cons request))
-        (->> (apply dissoc))
-        (update-in [:headers] #(apply dissoc (cons % ignore-headers))))))
+        ignore-headers ["host"]
+        cleanup-map    (u/trace :cleanup-map (-> (apply dissoc (cons request ignore-seq))
+                                                 (update-in [:headers] #(apply dissoc (cons % ignore-headers)))))]
+    (if (:body cleanup-map)
+      (update-in cleanup-map [:body] read-body)
+      cleanup-map)))
 
 (def do-action nil)
 ;; The actual action that takes place (either record or replay requests)
@@ -110,8 +118,8 @@ In :mode :replay, every requests are replayed if they already had been recorded.
   (let [resp (-> request
                  handler
                  cleanup-response-or-request)
-        requ (cleanup-response-or-request request)]
-    (swap! metadata #(assoc-in % [:requests requ] resp))
+        requ (cleanup-response-or-request (u/trace :request request))]
+    (swap! metadata #(assoc-in % [:requests requ] (u/trace :resp resp)))
     resp))
 
 (defmethod do-action "replay"
@@ -143,12 +151,18 @@ In :mode :replay, every requests are replayed if they already had been recorded.
   [request]
   (-> {:description "Proxy in charge or recording/replaying requests."}
       json/write-str
-      response/get-json-response))
+      response/get-json-response)
+  ;; {:status  200
+  ;;  :headers {"Content-Type" "text/plain"}
+  ;;  :body    (-> request
+  ;;               :body
+  ;;               slurp)}
+  )
 
 (def app-proxy "App to record or replay requests"
   (-> app-proxy-routes
-      ;; deal with basic errors
-      middleware/wrap-error-handling
+      ;; ;; deal with basic errors
+      ;; middleware/wrap-error-handling
       ;; compute the request for the real server
       (wrap-proxy metadata)
       ;; record or replay the request
