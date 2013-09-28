@@ -52,13 +52,13 @@
                        :as           :json})
       :body))
 
-(defn post "POST" [path body] (execute-post-or-put c/post path body))
+
 
 (comment
   (post "/cards/" {:name "anothertest"
                    :desc "some other desc"
                    :idList "51ccc748f7f9987320000cca"}))
-
+(defn post "POST" [path body] (execute-post-or-put c/post path body))
 (defn put "PUT" [path body] (execute-post-or-put c/put path body))
 
 (comment
