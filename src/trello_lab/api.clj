@@ -59,11 +59,12 @@
    :uri (str "/lists/" list-id "/cards/")})
 
 (defn move-card
-  [{:keys [id idList name] :as card-data}]
+  [{:keys [id idList name due] :as card-data}]
   {:method :put
    :uri     (str "/cards/" id)
    :params {:name name
-            :idList idList}})
+            :idList idList
+            :due due}})
 
 (defn add-checklist
   "Add a checklist to a card"
