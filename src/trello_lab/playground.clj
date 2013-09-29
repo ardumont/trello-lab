@@ -7,9 +7,15 @@
 (comment
   (def boards (-> (get-boards)
                   query/execute))
+
   (def board1 (->> boards
                    (filter (fn [b] (and (= (:name b) "api test board") (not (:closed b)))))
                    first))
+
+  (def board1-full (-> board1
+                       :id
+                       get-board
+                       query/execute))
 
   (def list-todo
     (-> {:name "Todo"
