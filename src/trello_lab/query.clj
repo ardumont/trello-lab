@@ -18,7 +18,7 @@
 (defn compute-url
   "Compute url with authentication needed."
   ([url path consumer-key]
-     (format "%s%s?key=%s" url path consumer-key))
+     (format "%s%s%skey=%s" url path (if (some #{\?} path) \& \?) consumer-key))
   ([url path consumer-key secret-token]
      (format "%s&token=%s" (compute-url url path consumer-key) secret-token)))
 

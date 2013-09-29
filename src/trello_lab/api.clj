@@ -17,7 +17,7 @@
   "Retrieve the boards of the current user."
   [id]
   {:method :get
-   :uri    (str "/boards/" id)})
+   :uri    (format "/boards/%s?memberships=all&memberships_member=true" id)})
 
 (defn get-cards
   "cards of a board"
