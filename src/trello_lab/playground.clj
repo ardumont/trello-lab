@@ -17,11 +17,11 @@
                        get-board
                        query/execute))
 
-  (def list-todo
-    (-> {:name "Todo"
-         :idBoard (:id board1)}
-        add-list
-        query/execute))
+  ;; (def list-todo
+  ;;   (-> {:name "Todo"
+  ;;        :idBoard (:id board1)}
+  ;;       add-list
+  ;;       query/execute))
 
   (def list-todo (->> board1
                       :id
@@ -41,7 +41,7 @@
   ;; (:id list-doing) ;; "50bcfd2f033110476000e76a"
 
   (def card1
-    (-> {:name "card test"
+    (-> {:name "Joy of FUN(ctional) LANGUAGES"
          :idList (:id list-todo)
          :due "2013-07-29T08:00:00.000Z"}
         add-card
@@ -70,6 +70,11 @@
   (def card-joy (->> cards
                      (filter #(= (:name %) "Joy of FUN(ctional) LANGUAGES"))
                      first))
+
+  (def card-joy-from-get (-> card-joy
+                             :id
+                             get-card
+                             query/execute))
 
   (def card1 (-> cards
                  first))
