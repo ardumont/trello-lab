@@ -43,7 +43,8 @@
   (def card1
     (-> {:name "Joy of FUN(ctional) LANGUAGES"
          :idList (:id list-todo)
-         :due "2013-07-29T08:00:00.000Z"}
+         :due "2013-07-29T08:00:00.000Z"
+         :desc "update description from playground"}
         add-card
         query/execute))
 
