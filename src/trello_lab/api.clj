@@ -64,12 +64,13 @@
    :uri (str "/lists/" list-id "/cards/")})
 
 (defn update-card
-  [{:keys [id idList name due] :as card-data}]
+  [{:keys [id idList name due labels] :as card-data}]
   {:method :put
    :uri     (str "/cards/" id)
    :params {:name name
             :idList idList
-            :due due}})
+            :due due
+            :labels labels}})
 
 (defn update-card-labels
   [{:keys [id labels]}]

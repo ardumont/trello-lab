@@ -90,6 +90,7 @@
   (def card1 (-> card-joy
                  (assoc :idList (:id list-doing))
                  (assoc :name "card moved and renamed")
+                 (assoc :labels "red,orange,yellow")
                  update-card
                  query/execute))
 
