@@ -90,8 +90,19 @@
   (def card1 (-> card-joy
                  (assoc :idList (:id list-doing))
                  (assoc :name "card moved and renamed")
-                 (assoc :labels "red,orange,yellow")
+                 (assoc :labels "")
                  update-card
+                 query/execute))
+
+  (def comment1 (-> card-joy
+                    (assoc :comment "some comment to be put")
+                    add-card-comment
+                    query/execute))
+
+  (def card1 (-> card-joy
+                 (assoc :comment-id (:id comment1))
+                 (assoc :comment "overwrite some comment to be put")
+                 update-card-comment
                  query/execute))
 
   (def card-joy-from-get (-> card-joy

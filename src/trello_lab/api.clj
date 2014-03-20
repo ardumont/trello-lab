@@ -83,6 +83,18 @@
   {:method :delete
    :uri     (format "/cards/%s/labels/%s" id label)})
 
+(defn add-card-comment
+  [{:keys [id comment]}]
+  {:method :post
+   :uri (format "/cards/%s/actions/comments" id)
+   :params {:text comment}})
+
+(defn update-card-comment
+  [{:keys [id comment-id comment]}]
+  {:method :put
+   :uri (format "/cards/%s/actions/%s/comments" id comment-id)
+   :params {:text comment}})
+
 (defn add-checklist
   "Add a checklist to a card"
   [{:keys [card-id name] :as checklist-data}]
