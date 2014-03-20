@@ -77,6 +77,79 @@
                              get-card
                              query/execute))
 
+  (def id-to-user {"some-user-id" "ardumont"})
+
+  (map (fn [[id comment]] [(id-to-user id) comment])
+       '(["some-user-id" "some comment"] ["some-user-id" "some other comment"]))
+
+  (map
+   (fn [e] [(:idMemberCreator e) (get-in e [:data :text])])
+   (:actions card-with-comment))
+
+  (def card-with-comment {:labels [{:color "green", :name "green label with & char"}]
+                          :manualCoverAttachment false
+                          :desc ""
+                          :dateLastActivity "2014-03-20T17:46:14.417Z"
+                          :idBoard "51d99bbc1e1d8988390047f2"
+                          :name "Joy of FUN(ctional) LANGUAGES"
+                          :idChecklists []
+                          :descData nil
+                          :badges {:checkItems 0
+                                   :fogbugz ""
+                                   :viewingMemberVoted false
+                                   :attachments 0
+                                   :subscribed false
+                                   :checkItemsChecked 0
+                                   :comments 1
+                                   :votes 0
+                                   :due nil
+                                   :description false}
+                          :idList "51d99bbc1e1d8988390047f3"
+                          :closed false
+                          :pos 16384
+                          :url "https://trello.com/c/SvkeABjD/2729-joy-of-fun-ctional-languages"
+                          :checkItemStates []
+                          :shortUrl "https://trello.com/c/SvkeABjD"
+                          :idAttachmentCover nil
+                          :idShort 2729
+                          :due nil
+                          :id "532b2947a89432e147637511"
+                          :actions [{:id "532b29662890a6a74786e112"
+                                     :idMemberCreator "some-user-id"
+                                     :data {:board {:shortLink "6JSsg3aG"
+                                                    :name "api test board"
+                                                    :id "51d99bbc1e1d8988390047f2"}
+                                            :card {:shortLink "SvkeABjD"
+                                                   :idShort 2729
+                                                   :name "Joy of FUN(ctional) LANGUAGES"
+                                                   :id "532b2947a89432e147637511"}
+                                            :text "some comment"}
+                                     :type "commentCard"
+                                     :date "2014-03-20T17:46:14.420Z"
+                                     :memberCreator {:id "some-user-id"
+                                                     :avatarHash "ff242a6fbf51ccf70e4760b23e194bca"
+                                                     :fullName "Antoine R. Dumont"
+                                                     :initials "AD"
+                                                     :username "ardumont"}}
+                                    {:id "532b29662890a6a74786e112"
+                                     :idMemberCreator "some-user-id"
+                                     :data {:board {:shortLink "6JSsg3aG"
+                                                    :name "api test board"
+                                                    :id "51d99bbc1e1d8988390047f2"}
+                                            :card {:shortLink "SvkeABjD"
+                                                   :idShort 2729
+                                                   :name "Joy of FUN(ctional) LANGUAGES"
+                                                   :id "532b2947a89432e147637511"}
+                                            :text "some other comment"}
+                                     :type "commentCard"
+                                     :date "2014-03-20T17:46:14.420Z"
+                                     :memberCreator {:id "some-user-id"
+                                                     :avatarHash "ff242a6fbf51ccf70e4760b23e194bca"
+                                                     :fullName "Antoine R. Dumont"
+                                                     :initials "AD"
+                                                     :username "ardumont"}}]
+                          :idMembers []})
+
   (def card1 (-> cards
                  first))
 
