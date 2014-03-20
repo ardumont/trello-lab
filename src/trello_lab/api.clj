@@ -29,7 +29,7 @@
   "Detail of a card with id card-id."
   [card-id]
   {:method :get
-   :uri    (str "/cards/" card-id)})
+   :uri    (format "/cards/%s?actions=commentCard" card-id)})
 
 (defn lists
   "Display the lists of the board"
