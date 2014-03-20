@@ -10,9 +10,10 @@
                  [clj-oauth                     "1.4.0"]
                  [compojure                     "1.1.5"]
                  [org.clojure/data.json         "0.2.2"]
-                 [midje                         "1.5.1"]]
+                 [midje                         "1.6.3"]]
   :plugins [[lein-ring                          "0.8.5"]
             [lein-expectations                  "0.0.7"]]
   :ring {:handler trello-lab.handler/app}
   :profiles {:dev {:dependencies [[ring-mock    "0.1.5"]
-                                  [expectations "1.4.42"]]}})
+                                  [expectations "1.4.42"]
+                                  [midje        "1.6.3"]]}})
