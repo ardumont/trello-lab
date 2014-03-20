@@ -80,3 +80,7 @@
 (defmethod execute :put
   [{:keys [uri params]}]
   (put uri params))
+
+(defmethod execute :delete
+  [{:keys [uri params]}]
+  (api :delete uri params))

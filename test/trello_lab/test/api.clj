@@ -34,9 +34,9 @@
   (list-cards :id) => {:method :get
                        :uri    "/lists/:id/cards/"}
 
-  (move-card {:id :id
-              :name :n
-              :idList :i}) => {:method :put
-                               :uri     "/cards/:id"
-                               :params {:name :n
-                                        :idList :i}})
+  (update-card {:id :id
+               :name :n
+               :idList :i}) => {:method :put
+                                :uri     "/cards/:id"
+                                :params {:name :n
+                                         :idList :i}})

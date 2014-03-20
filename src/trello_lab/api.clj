@@ -63,13 +63,24 @@
   {:method :get
    :uri (str "/lists/" list-id "/cards/")})
 
-(defn move-card
+(defn update-card
   [{:keys [id idList name due] :as card-data}]
   {:method :put
    :uri     (str "/cards/" id)
    :params {:name name
             :idList idList
             :due due}})
+
+(defn update-card-labels
+  [{:keys [id labels]}]
+  {:method :put
+   :uri     (format "/cards/%s/labels" id)
+   :params {:value labels}})
+
+(defn delete-card-label
+  [{:keys [id label]}]
+  {:method :delete
+   :uri     (format "/cards/%s/labels/%s" id label)})
 
 (defn add-checklist
   "Add a checklist to a card"

@@ -34,14 +34,14 @@
                        :id
                        lists
                        query/execute
-                       (filter #(= (:name %) "Doing"))
+                       (filter #(= (:name %) "IN-PROGRESS"))
                        first))
 
   ;; (:id list-todo)  ;; "51cf0075e3c810c452000d29"
   ;; (:id list-doing) ;; "50bcfd2f033110476000e76a"
 
   (def card1
-    (-> {:name "Joy of FUN(ctional) LANGUAGES"
+    (-> {:name "some card"
          :idList (:id list-todo)
          :due "2013-07-29T08:00:00.000Z"
          :desc "update description from playground"}
@@ -49,19 +49,6 @@
         query/execute))
 
   ;; (card1 :id);; "51cf011238239ebc3a000626"
-
-  (def card1 (-> card1
-                 (assoc :idList (:id list-todo))
-                 ;; (assoc :name "some original name")
-                 (assoc :due "2013-07-28T10:00:00.000Z")
-                 move-card
-                 query/execute))
-
-  (def card1 (-> card1
-                 (assoc :idList (:id list-doing))
-                 (assoc :name "card moved and renamed")
-                 move-card
-                 query/execute))
 
   (def cards (-> board1
                  :id
@@ -71,6 +58,40 @@
   (def card-joy (->> cards
                      (filter #(= (:name %) "Joy of FUN(ctional) LANGUAGES"))
                      first))
+
+  (def card1 (-> card-joy
+                 (assoc :idList (:id list-doing))
+                 ;; (assoc :name "some original name")
+                 (assoc :due "2013-07-28T10:00:00.000Z")
+                 ;; add label green
+                 (update-in [:labels] conj "green")
+                 update-card
+                 query/execute))
+
+  (-> {:id     (:id card1)
+       :labels "red,green,yellow"}
+      update-card-labels
+      query/execute)
+
+  (-> {:id     (:id card1)
+       :label  "green"}
+      delete-card-label
+      query/execute)
+
+  (def card1 (-> card-joy
+                 (assoc :idList (:id list-todo))
+                 ;; (assoc :name "some original name")
+                 (assoc :due "2013-07-28T10:00:00.000Z")
+                 (update-in [:labels] (fn [_] []))
+                 update-card
+                 query/execute))
+
+
+  (def card1 (-> card-joy
+                 (assoc :idList (:id list-doing))
+                 (assoc :name "card moved and renamed")
+                 update-card
+                 query/execute))
 
   (def card-joy-from-get (-> card-joy
                              :id
