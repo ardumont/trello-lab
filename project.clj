@@ -14,6 +14,6 @@
   :plugins [[lein-ring                          "0.8.5"]
             [lein-expectations                  "0.0.7"]]
   :ring {:handler trello-lab.handler/app}
-  :profiles {:dev {:dependencies [[ring-mock    "0.1.5"]
-                                  [expectations "1.4.42"]
-                                  [midje        "1.6.3"]]}})
+  :dev-dependencies [[ring-mock    "0.1.5"]
+                     [expectations "1.4.42"]
+                     [midje        "1.6.3"]])
