@@ -8,6 +8,16 @@
   (def boards (-> (get-boards)
                   query/execute))
 
+  (def user-me (-> (get-me)
+                   query/execute))
+
+  (let [member-id (:id user-me)]
+    (->> boards
+         ;; filter on board closed
+         (filter (fn [board] (= true (get-in board [:closed]))))
+         ;; now retrieve the boards id
+         (map (fn [board] (try ((comp #(query/execute %) #(delete-member-board % member-id) #(get-in % [:id])) board) (catch java.lang.Exception e (println (.getMessage e))))))))
+
   (def board1 (->> boards
                    (filter (fn [b] (and (= (:name b) "api test board") (not (:closed b)))))
                    first))

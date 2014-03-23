@@ -19,6 +19,12 @@
   {:method :get
    :uri    (format "/boards/%s?memberships=active&memberships_member=true" id)})
 
+(defn delete-member-board
+  "Given a board-id and a member-id, remove the member from the board."
+  [board-id member-id]
+  {:method :delete
+   :uri    (format "/boards/%s/members/%s" board-id member-id)})
+
 (defn get-cards
   "cards of a board"
   [board-id]
